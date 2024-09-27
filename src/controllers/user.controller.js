@@ -19,12 +19,14 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const { fullName, email, username, password } = req.body;
 
+  //Check if blow fields are not empty if empty throw error
   if (
     [fullName, email, username, password].some((field) => field?.trim() === "")
   ) {
     throw new ApiError(400, "All fields are required");
   }
 
+  //Check for existing user with same username or email
   const existedUser = User.findOne({
     $or: [{ username }, { email }],
   });
@@ -56,6 +58,7 @@ const registerUser = asyncHandler(async (req, res) => {
     username: username.toLowerCase(),
   });
 
+  // Checking if user has been created or not
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
